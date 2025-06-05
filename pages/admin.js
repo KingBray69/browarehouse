@@ -77,4 +77,35 @@ export default function Admin() {
     );
   };
 
-  # AliExpress‐import omitted to reduce length ##
+// ... (above this is your handleManualSubmit logic)
+
+  // 2. AliExpress import: paste URL → call RapidAPI → add to Firestore
+  const handleAliSubmit = async (e) => {
+    e.preventDefault();
+    if (!aliUrl) {
+      setStatus("Please paste an AliExpress product URL.");
+      return;
+    }
+    setStatus("Fetching AliExpress product…");
+    try {
+      const res = await fetch("/api/addProduct", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ aliUrl }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        setStatus("AliExpress product added successfully!");
+        setAliUrl("");
+      } else {
+        console.error(json);
+        setStatus(`Error: ${json.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      setStatus("Network error when fetching AliExpress.");
+    }
+  };
+
+// ... (below this is your return JSX)
+
